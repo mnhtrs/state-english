@@ -1,4 +1,4 @@
-import { GeminiAIProvider } from '../../src/providers/GeminiAIProvider';
+import { GeminiAIProvider } from '../../src/providers/GeminiAIProvider.js';
 
 export default async function handler(req: any, res: any) {
   // CORS headers if needed
@@ -12,7 +12,14 @@ export default async function handler(req: any, res: any) {
   }
 
   const { action } = req.query;
-  const payload = req.body;
+  let payload = req.body;
+  if (typeof payload === 'string') {
+    try {
+      payload = JSON.parse(payload);
+    } catch (e) {
+      // Ignore parse error, maybe it's already an object somehow
+    }
+  }
 
   const geminiApiKey = process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
   const geminiModel = process.env.VITE_GEMINI_MODEL || process.env.GEMINI_MODEL || 'gemini-3.5-flash';
