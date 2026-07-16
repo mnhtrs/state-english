@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <!-- Soft Drop Shadow with large bounding box to prevent clipping -->
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#7f1d1d" flood-opacity="0.8" />
+    </filter>
+  </defs>
+  
+  <!-- Solid vibrant red background -->
+  <rect width="120" height="120" rx="28" fill="#ef4444" />
+  
+  <!-- Subtle inner bright border -->
+  <rect width="116" height="116" x="2" y="2" rx="26" fill="none" stroke="#fca5a5" stroke-width="2" stroke-opacity="0.4" />
+  
+  <!-- Solid vibrant yellow Letter E -->
+  <g transform="translate(60, 60) rotate(-45) translate(-60, -60)">
+    <path d="M 85 20 L 45 20 C 39.5 20 35 24.5 35 30 L 35 90 C 35 95.5 39.5 100 45 100 L 85 100 M 35 60 L 75 60" 
+          fill="none" 
+          stroke="#facc15" 
+          stroke-width="12" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"
+          filter="url(#softShadow)" />
+  </g>
+</svg>
