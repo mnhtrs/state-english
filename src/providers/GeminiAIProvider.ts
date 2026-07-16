@@ -161,13 +161,16 @@ Mỗi item: label (tiếng Việt ngắn), situation (VN), sentence (EN), natura
 Ví dụ: "recover (hồi phục thể chất)", "move on (tiến về phía trước)"
 
 --- FIELD: quiz ---
-1 bài tập DỊCH THUẬT thực tế. Bắt buộc type="translation".
+3 bài tập DỊCH THUẬT thực tế. Bắt buộc type="translation".
 Mỗi item:
   question: Câu tiếng Anh thực tế có chứa từ "${word}".
-  context: Ngữ cảnh tiếng Việt ngắn gọn (giúp người học dễ hình dung tình huống để dịch).
-Ví dụ:
+  context: CHỈ ghi địa điểm và người đang nói chuyện. NGHIÊM CẤM đưa nội dung hay ý nghĩa của câu tiếng Anh vào đây. Nếu vi phạm người dùng sẽ đoán được đáp án.
+Ví dụ SAI (BỊ CẤM vì lộ đáp án):
   question: "I can't get over how cheap the food is here!"
   context: "Bạn rất ngạc nhiên vì đồ ăn rẻ."
+Ví dụ ĐÚNG (Chỉ đưa bối cảnh):
+  question: "I can't get over how cheap the food is here!"
+  context: "Tại quán ăn, trò chuyện với bạn bè."
 
 Trả về đúng JSON schema. Tất cả giải thích bằng tiếng Việt.
     `;
@@ -222,7 +225,7 @@ Trả về đúng JSON schema. Tất cả giải thích bằng tiếng Việt.
         }
       }
     });
-    const prompt = `Học viên đang ôn tập từ "${word}". Hãy sinh ra 2 bài tập DỊCH THUẬT thực tế MỚI HOÀN TOÀN. Bắt buộc type="translation". Trả về mảng JSON gồm 2 câu (question: câu tiếng Anh, context: ngữ cảnh tiếng Việt).`;
+    const prompt = `Học viên đang ôn tập từ "${word}". Hãy sinh 3 bài tập DỊCH THUẬT thực tế MỚI HOÀN TOÀN. Bắt buộc type="translation". Trả về mảng JSON gồm 3 câu (question: câu tiếng Anh, context: CHỈ mô tả địa điểm/người nghe, NGHIÊM CẤM đưa nội dung hoặc dịch nghĩa của câu hỏi vào ngữ cảnh. Ví dụ đúng: "Tại công ty, nói chuyện với sếp").`;
     const result = await model.generateContent(prompt);
     return JSON.parse(result.response.text());
   }

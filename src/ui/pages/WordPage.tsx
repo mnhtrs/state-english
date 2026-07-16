@@ -83,7 +83,7 @@ const TranslationQuizItem: React.FC<{
   quiz: QuizItem;
   index: number;
   word: string;
-}> = ({ quiz, index, word }) => {
+}> = ({ quiz, word }) => {
   const { learningService } = useServices();
   const [translation, setTranslation] = useState('');
   const [evaluating, setEvaluating] = useState(false);
@@ -105,9 +105,6 @@ const TranslationQuizItem: React.FC<{
 
   return (
     <div style={{ padding: '1.25rem', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', borderLeft: '3px solid var(--accent-color)' }}>
-      <p style={{ margin: '0 0 0.5rem', fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-        Bài tập {index + 1}:
-      </p>
       {quiz.context && (
         <p style={{ margin: '0 0 0.75rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
           <span style={{ opacity: 0.6 }}>Ngữ cảnh:</span> {quiz.context}
