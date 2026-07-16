@@ -47,8 +47,8 @@ export class HttpAIProvider implements AIProvider {
     return this.post<UsageItem[]>('/api/ai/generate-more-usages', { word, currentUsages });
   }
 
-  async generateMoreQuizzes(word: string): Promise<QuizItem[]> {
-    return this.post<QuizItem[]>('/api/ai/generate-more-quizzes', { word });
+  async generateMoreQuizzes(word: string, currentQuizzes: QuizItem[]): Promise<QuizItem[]> {
+    return this.post<QuizItem[]>('/api/ai/generate-more-quizzes', { word, currentQuizzes });
   }
 
   async generateMoreMisconceptions(

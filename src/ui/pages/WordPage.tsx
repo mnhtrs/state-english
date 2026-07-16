@@ -176,7 +176,29 @@ function SlideNavigator<T>({
   moreLabel?: string;
 }) {
   const [page, setPage] = useState(0);
+  const [inputVal, setInputVal] = useState('1');
   const total = slides.length;
+
+  // Keep inputVal in sync when page changes via buttons
+  const goToPage = (newPage: number) => {
+    const clamped = Math.max(0, Math.min(total - 1, newPage));
+    setPage(clamped);
+    setInputVal(String(clamped + 1));
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputVal(e.target.value);
+  };
+
+  const handleInputCommit = () => {
+    const parsed = parseInt(inputVal, 10);
+    if (!isNaN(parsed) && parsed >= 1 && parsed <= total) {
+      goToPage(parsed - 1);
+    } else {
+      // Reset to current page on invalid input
+      setInputVal(String(page + 1));
+    }
+  };
 
   return (
     <div>
@@ -188,7 +210,7 @@ function SlideNavigator<T>({
       {/* Navigation */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem' }}>
         <button
-          onClick={() => setPage(p => Math.max(0, p - 1))}
+          onClick={() => goToPage(page - 1)}
           disabled={page === 0}
           style={{
             background: 'none', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px',
@@ -197,13 +219,34 @@ function SlideNavigator<T>({
           }}
         >← Trước</button>
 
-        <span style={{ color: 'var(--text-secondary)', fontSize: '0.825rem' }}>
-          {page + 1} / {total}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-secondary)', fontSize: '0.825rem' }}>
+          <input
+            type="number"
+            min={1}
+            max={total}
+            value={inputVal}
+            onChange={handleInputChange}
+            onBlur={handleInputCommit}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleInputCommit(); }}
+            style={{
+              width: '2.75rem',
+              textAlign: 'center',
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: '6px',
+              color: 'var(--text-primary)',
+              fontSize: '0.875rem',
+              padding: '0.2rem 0.3rem',
+              outline: 'none',
+              MozAppearance: 'textfield' as any,
+            }}
+          />
+          <span>/ {total}</span>
+        </div>
 
         {page < total - 1 ? (
           <button
-            onClick={() => setPage(p => Math.min(total - 1, p + 1))}
+            onClick={() => goToPage(page + 1)}
             style={{
               background: 'var(--accent-color)', border: 'none', borderRadius: '8px',
               padding: '0.35rem 0.875rem', color: 'white',
@@ -214,7 +257,7 @@ function SlideNavigator<T>({
           <button
             onClick={async () => {
               await onRequestMore();
-              setPage(total); // move to newly added slide
+              goToPage(total); // move to newly added slide
             }}
             disabled={moreLoading}
             style={{

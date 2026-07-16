@@ -45,7 +45,7 @@ export default async function handler(req: any, res: any) {
         payload.currentUsages
       );
     } else if (action === 'generate-more-quizzes') {
-      result = await geminiProvider.generateMoreQuizzes(payload.word);
+      result = await geminiProvider.generateMoreQuizzes(payload.word, payload.currentQuizzes ?? []);
     } else if (action === 'generate-more-misconceptions') {
       result = await geminiProvider.generateMoreMisconceptions(
         payload.word,

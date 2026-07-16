@@ -53,7 +53,7 @@ function localAIApiPlugin(geminiApiKey: string, geminiModel: string) {
                 payload.currentUsages
               );
             } else if (req.url === '/api/ai/generate-more-quizzes') {
-              result = await geminiProvider.generateMoreQuizzes(payload.word);
+              result = await geminiProvider.generateMoreQuizzes(payload.word, payload.currentQuizzes ?? []);
             } else if (req.url === '/api/ai/generate-more-misconceptions') {
               result = await geminiProvider.generateMoreMisconceptions(
                 payload.word,

@@ -110,7 +110,7 @@ export interface AIProvider {
     currentUsages: { label: string }[]
   ): Promise<UsageItem[]>;
 
-  generateMoreQuizzes(word: string): Promise<QuizItem[]>;
+  generateMoreQuizzes(word: string, currentQuizzes: QuizItem[]): Promise<QuizItem[]>;
 
   generateMoreMisconceptions(
     word: string,

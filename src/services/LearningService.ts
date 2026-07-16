@@ -114,7 +114,8 @@ export class LearningService {
     const entry = await this.storageProvider.getWordById(wordId);
     if (!entry?.aiData) throw new Error('Word not found');
 
-    const newQuizzes = await this.aiProvider.generateMoreQuizzes(entry.word);
+    const existingQuizzes = entry.aiData.quiz ?? [];
+    const newQuizzes = await this.aiProvider.generateMoreQuizzes(entry.word, existingQuizzes);
     const updatedQuizzes = [...(entry.aiData.quiz ?? []), ...newQuizzes];
 
     const updatedAiData: AIData = { ...entry.aiData, quiz: updatedQuizzes };

@@ -206,7 +206,7 @@ Trả về đúng JSON schema. Tất cả giải thích bằng tiếng Việt.
     return JSON.parse(result.response.text());
   }
 
-  async generateMoreQuizzes(word: string): Promise<QuizItem[]> {
+  async generateMoreQuizzes(word: string, currentQuizzes: QuizItem[]): Promise<QuizItem[]> {
     const model = this.genAI.getGenerativeModel({
       model: this.modelName,
       generationConfig: {
@@ -225,7 +225,16 @@ Trả về đúng JSON schema. Tất cả giải thích bằng tiếng Việt.
         }
       }
     });
-    const prompt = `Học viên đang ôn tập từ "${word}". Hãy sinh 3 bài tập DỊCH THUẬT thực tế MỚI HOÀN TOÀN. Bắt buộc type="translation". Trả về mảng JSON gồm 3 câu (question: câu tiếng Anh, context: CHỈ mô tả địa điểm/người nghe, NGHIÊM CẤM đưa nội dung hoặc dịch nghĩa của câu hỏi vào ngữ cảnh. Ví dụ đúng: "Tại công ty, nói chuyện với sếp").`;
+    const usedQuestions = currentQuizzes.map(q => `"${q.question}" (ngữ cảnh: ${q.context})`).join('\n');
+    const prompt = `Học viên đang ôn tập từ "${word}". Hãy sinh 3 bài tập DỊCH THUẬT thực tế MỚI HOÀN TOÀN.
+CÁC CÂU NGƯỜI DÙNG ĐÃ LUỜN (TUYỆT ĐỐI KHÔNG LẶP LẠI NGUỔN GỐC, TÌNH HUỐNG, BỐI CẢNH TƯƠNG TỰ):
+${usedQuestions}
+
+Yêu cầu:
+- question: Câu tiếng Anh THỰC TẾC hoàn toàn MỚI, khác tình huống/lĩnh vực với các câu trên.
+- context: CHỈ ghi địa điểm và người đang nói chuyện. NGHIÊM CẤM dịch nghĩa câu hỏi, chỉ mô tả bối cảnh.
+- type: "translation"
+Trả về mảng JSON gồm 3 item.`;
     const result = await model.generateContent(prompt);
     return JSON.parse(result.response.text());
   }
