@@ -24,7 +24,7 @@ const ChapterSection: React.FC<{
   const [open, setOpen] = useState(true);
 
   return (
-    <div style={{ backgroundColor: 'var(--bg-color)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', overflow: 'hidden' }}>
+    <div style={{ backgroundColor: 'var(--bg-color)', border: '1px solid rgba(255,255,255,0.25)', borderRadius: '12px', overflow: 'hidden' }}>
       {/* Clickable header / toggle */}
       <button
         onClick={() => setOpen(v => !v)}
@@ -32,7 +32,7 @@ const ChapterSection: React.FC<{
           width: '100%',
           background: 'none',
           border: 'none',
-          borderBottom: open ? '1px solid rgba(255,255,255,0.1)' : 'none',
+          borderBottom: open ? '1px solid rgba(255,255,255,0.25)' : 'none',
           padding: '1rem 1.25rem',
           cursor: 'pointer',
           display: 'flex',
@@ -114,6 +114,7 @@ export const Home: React.FC = () => {
   const { learningService } = useServices();
   const [chapters, setChapters] = useState<{ chapter: Chapter; words: WordEntry[] }[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const loadChapters = async () => {
@@ -141,7 +142,7 @@ export const Home: React.FC = () => {
       <div style={{ position: 'absolute', top: '-100px', left: '10%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%)', filter: 'blur(40px)', zIndex: -1, pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', top: '50px', right: '10%', width: '200px', height: '200px', background: 'radial-gradient(circle, rgba(139,92,246,0.1) 0%, rgba(0,0,0,0) 70%)', filter: 'blur(40px)', zIndex: -1, pointerEvents: 'none' }} />
 
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3.5rem' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
           <h1 style={{ 
             margin: '0 0 0.5rem', 
@@ -171,6 +172,40 @@ export const Home: React.FC = () => {
         </Link>
       </header>
 
+      {/* Search Bar */}
+      <div style={{ marginBottom: '3rem', position: 'relative' }}>
+        <label htmlFor="search-input" style={{ display: 'none' }}>Tìm kiếm</label>
+        <input 
+          id="search-input"
+          name="search"
+          type="text" 
+          placeholder="Tìm kiếm từ vựng, ngày tháng (VD: 16/07/2026)..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onFocus={(e) => { e.target.style.borderColor = 'var(--accent-color)'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.2), inset 0 2px 4px rgba(0,0,0,0.1)'; }}
+          onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.3)'; e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.1)'; }}
+          style={{
+            width: '100%',
+            padding: '0.875rem 1rem 0.875rem 2.75rem',
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            border: '1px solid rgba(255,255,255,0.3)',
+            borderRadius: '12px',
+            color: 'var(--text-primary)',
+            fontSize: '0.95rem',
+            outline: 'none',
+            transition: 'all 0.2s ease',
+            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)'
+          }}
+        />
+        <svg 
+          style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.5, pointerEvents: 'none' }} 
+          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        >
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+
       {loading ? (
         <p>Loading your learning book...</p>
       ) : chapters.length === 0 ? (
@@ -182,9 +217,34 @@ export const Home: React.FC = () => {
         </Card>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-          {chapters.map(({ chapter, words }) => (
-            <ChapterSection key={chapter.id} chapter={chapter} words={words} />
-          ))}
+          {chapters
+            .map(({ chapter, words }) => {
+              const query = searchQuery.toLowerCase().trim();
+              if (!query) return { chapter, words };
+              
+              const formattedDate = formatChapterId(chapter.id);
+              if (formattedDate.includes(query)) {
+                return { chapter, words };
+              }
+
+              const filteredWords = words.filter(w => w.word.toLowerCase().includes(query));
+              return { chapter, words: filteredWords };
+            })
+            .filter(c => c.words.length > 0)
+            .map(({ chapter, words }) => (
+              <ChapterSection key={chapter.id} chapter={chapter} words={words} />
+            ))}
+          
+          {chapters.filter(c => c.words.length > 0).length > 0 && 
+           chapters.map(({ chapter, words }) => {
+             const query = searchQuery.toLowerCase().trim();
+             if (!query) return true;
+             return formatChapterId(chapter.id).includes(query) || words.some(w => w.word.toLowerCase().includes(query));
+           }).filter(Boolean).length === 0 && (
+             <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+               Không tìm thấy kết quả phù hợp.
+             </div>
+          )}
         </div>
       )}
     </div>

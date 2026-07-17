@@ -61,9 +61,9 @@ const Collapsible: React.FC<{ title: string; emoji?: string; defaultOpen?: boole
 }) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div style={{ backgroundColor: 'var(--bg-color)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}>
+    <div style={{ backgroundColor: 'var(--bg-color)', border: '1px solid rgba(255,255,255,0.25)', borderRadius: '10px', overflow: 'hidden' }}>
       <button onClick={() => setOpen(v => !v)} style={{
-        width: '100%', background: 'none', border: 'none', borderBottom: open ? '1px solid rgba(255,255,255,0.1)' : 'none',
+        width: '100%', background: 'none', border: 'none', borderBottom: open ? '1px solid rgba(255,255,255,0.25)' : 'none',
         padding: '0.75rem 1rem', color: 'var(--text-primary)',
         cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
         display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'background 0.2s'
@@ -104,7 +104,7 @@ const TranslationQuizItem: React.FC<{
   };
 
   return (
-    <div style={{ padding: '1.25rem', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', borderLeft: '3px solid var(--accent-color)' }}>
+    <div style={{ padding: '1.25rem', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.25)', borderLeft: '3px solid var(--accent-color)' }}>
       {quiz.context && (
         <p style={{ margin: '0 0 0.75rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
           <span style={{ opacity: 0.6 }}>Ngữ cảnh:</span> {quiz.context}
@@ -115,11 +115,16 @@ const TranslationQuizItem: React.FC<{
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <label htmlFor="translation-input" style={{ display: 'none' }}>Bản dịch</label>
         <textarea
+          id="translation-input"
+          name="translation"
           value={translation}
           onChange={e => setTranslation(e.target.value)}
           placeholder="Nhập bản dịch tiếng Việt của bạn..."
-          style={{ width: '100%', minHeight: '80px', padding: '0.875rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(0,0,0,0.2)', color: 'white', resize: 'vertical', fontFamily: 'inherit' }}
+          style={{ width: '100%', minHeight: '80px', padding: '0.875rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.3)', backgroundColor: 'rgba(0,0,0,0.2)', color: 'white', resize: 'vertical', fontFamily: 'inherit', outline: 'none', transition: 'border-color 0.2s' }}
+          onFocus={e => (e.target.style.borderColor = 'var(--accent-color)')}
+          onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.3)')}
         />
         <button
           onClick={handleEvaluate}
@@ -213,14 +218,17 @@ function SlideNavigator<T>({
           onClick={() => goToPage(page - 1)}
           disabled={page === 0}
           style={{
-            background: 'none', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px',
+            background: 'none', border: '1px solid rgba(255,255,255,0.25)', borderRadius: '8px',
             padding: '0.35rem 0.875rem', color: page === 0 ? 'var(--text-secondary)' : 'var(--text-primary)',
             cursor: page === 0 ? 'not-allowed' : 'pointer', fontSize: '0.875rem', transition: 'background 0.2s'
           }}
         >← Trước</button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-secondary)', fontSize: '0.825rem' }}>
+          <label htmlFor="page-number-input" style={{ display: 'none' }}>Số trang</label>
           <input
+            id="page-number-input"
+            name="page-number"
             type="number"
             min={1}
             max={total}
@@ -232,7 +240,7 @@ function SlideNavigator<T>({
               width: '2.75rem',
               textAlign: 'center',
               background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.15)',
+              border: '1px solid rgba(255,255,255,0.3)',
               borderRadius: '6px',
               color: 'var(--text-primary)',
               fontSize: '0.875rem',
@@ -409,7 +417,7 @@ export const WordPage: React.FC = () => {
       {/* ── Dictionary Reference (collapsed) ── */}
       <div style={{ marginBottom: '1.5rem' }}>
         <Collapsible title="Định nghĩa từ điển (tham khảo)" defaultOpen={false}>
-          <div style={{ padding: '1rem', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.07)', fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+          <div style={{ padding: '1rem', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)', fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
             <strong style={{ color: 'var(--text-primary)' }}>{word.dictionaryData.partOfSpeech}</strong>
             <div style={{ marginTop: '0.5rem', whiteSpace: 'pre-wrap' }}>{word.dictionaryData.definition}</div>
           </div>
@@ -474,7 +482,7 @@ export const WordPage: React.FC = () => {
                 renderSlide={(slideMisconceptions) => (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     {slideMisconceptions?.map((m, i) => (
-                      <div key={i} style={{ padding: '1rem', backgroundColor: 'rgba(239,68,68,0.06)', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.18)' }}>
+                      <div key={i} style={{ padding: '1rem', backgroundColor: 'rgba(239,68,68,0.06)', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.3)' }}>
                         <p style={{ margin: '0 0 0.3rem', color: 'var(--danger-color)', fontFamily: 'monospace', fontSize: '0.95rem' }}>
                           ❌ "{m.incorrect}"
                         </p>
