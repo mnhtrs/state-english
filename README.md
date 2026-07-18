@@ -18,7 +18,7 @@ Hệ thống được tích hợp **AI (Google Gemini)** để phân tích tự 
 
 - 🤖 **Phân tích bằng AI**: Tự động giải nghĩa, chỉ ra các cách dùng phổ biến và những trường hợp dễ bị hiểu sai nhất của từ vựng.
 - 🎯 **Bài tập thực hành**: AI sinh ra bài tập dịch thuật tương tác chấm điểm ngay lập tức.
-- 📚 **Sổ tay từ vựng**: Lưu trữ từ vựng theo ngày tháng, tự động đồng bộ (IndexedDB).
+- 📚 **Sổ tay từ vựng**: Lưu trữ từ vựng theo ngày tháng (IndexedDB).
 - 🔗 **Tra cứu nhanh**: Kết nối trực tiếp với YouGlish, Cambridge, Oxford và Dictionary.com.
 
 ## 🚀 Cài đặt & Chạy dự án
