@@ -25,14 +25,17 @@ function localAIApiPlugin(geminiApiKey: string, geminiModel: string) {
           return next();
         }
 
-        if (!geminiApiKey) {
+        const userApiKey = req.headers['x-user-gemini-key'] as string | undefined;
+        const activeApiKey = userApiKey || geminiApiKey;
+
+        if (!activeApiKey) {
           res.writeHead(500, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'VITE_GEMINI_API_KEY is not set in .env' }));
+          res.end(JSON.stringify({ error: 'VITE_GEMINI_API_KEY is not set in .env and no user key provided' }));
           return;
         }
 
         const { GeminiAIProvider } = await import('./src/providers/GeminiAIProvider.js');
-        const geminiProvider = new GeminiAIProvider(geminiApiKey, geminiModel);
+        const geminiProvider = new GeminiAIProvider(activeApiKey, geminiModel);
 
         let body = '';
         req.on('data', (chunk: Buffer) => { body += chunk.toString(); });

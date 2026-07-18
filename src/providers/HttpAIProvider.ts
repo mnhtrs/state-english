@@ -19,10 +19,14 @@ export class HttpAIProvider implements AIProvider {
 
   private async post<T>(path: string, body: object): Promise<T> {
     let response: Response;
+    const userKey = localStorage.getItem('statelish_user_gemini_key') || '';
     try {
       response = await fetch(`${this.baseUrl}${path}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(userKey ? { 'X-User-Gemini-Key': userKey } : {})
+        },
         body: JSON.stringify(body),
       });
     } catch (e: any) {

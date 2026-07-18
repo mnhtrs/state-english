@@ -21,7 +21,8 @@ export default async function handler(req: any, res: any) {
     }
   }
 
-  const geminiApiKey = process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
+  const userApiKey = req.headers['x-user-gemini-key'];
+  const geminiApiKey = userApiKey || process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
   const geminiModel = process.env.VITE_GEMINI_MODEL || process.env.GEMINI_MODEL || 'gemini-3.5-flash';
 
   if (!geminiApiKey) {

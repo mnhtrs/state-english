@@ -4,6 +4,7 @@ import { useServices } from '../ServiceProvider';
 import type { Chapter, WordEntry } from '../../core/domain';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
+import { userApiKey } from '../../config/userApiKey';
 
 // ─────────────────────────────────────────────
 // Helpers
@@ -181,6 +182,20 @@ export const Home: React.FC = () => {
   const [chapters, setChapters] = useState<{ chapter: Chapter; words: WordEntry[] }[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  const [showApiModal, setShowApiModal] = useState(false);
+  const [apiKeyInput, setApiKeyInput] = useState('');
+
+  useEffect(() => {
+    if (showApiModal) {
+      setApiKeyInput(userApiKey.get());
+    }
+  }, [showApiModal]);
+
+  const saveApiKey = () => {
+    userApiKey.set(apiKeyInput);
+    setShowApiModal(false);
+  };
 
   useEffect(() => {
     const loadChapters = async () => {
@@ -270,6 +285,24 @@ export const Home: React.FC = () => {
                 {totalWords} từ
               </div>
             )}
+            <button
+              onClick={() => setShowApiModal(true)}
+              title="Cài đặt API Key cá nhân"
+              style={{
+                width: '40px', height: '40px',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--border-strong)',
+                background: 'var(--bg-surface)',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'var(--transition)',
+              }}
+              onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)'; }}
+              onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+            >
+              <i className="fa-solid fa-gear" />
+            </button>
             <Link to="/add" style={{ textDecoration: 'none' }}>
               <Button style={{ gap: '0.5rem' }}>
                 <i className="fa-solid fa-plus" />
@@ -382,6 +415,58 @@ export const Home: React.FC = () => {
               <p>Không tìm thấy kết quả cho <strong style={{ color: 'var(--text-secondary)' }}>"{searchQuery}"</strong></p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* ── API Key Modal ── */}
+      {showApiModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0, 0, 0, 0.4)',
+          backdropFilter: 'blur(2px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000, padding: '1.5rem'
+        }}>
+          <div className="animate-scale-in" style={{
+            background: 'var(--bg-primary)',
+            padding: '2rem',
+            borderRadius: 'var(--radius-lg)',
+            width: '100%', maxWidth: '420px',
+            boxShadow: 'var(--shadow-lg)',
+            border: '1px solid var(--border)',
+          }}>
+            <h3 style={{ margin: '0 0 1rem', fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: 'var(--accent)' }}>
+              Cài đặt API Key
+            </h3>
+            <p style={{ margin: '0 0 1.25rem', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              Sử dụng Gemini API Key của riêng bạn. Nếu bỏ trống, hệ thống sẽ sử dụng key mặc định. Key được lưu an toàn trên trình duyệt của bạn.
+            </p>
+            <input
+              type="password"
+              placeholder="Nhập Gemini API Key (AIzaSy...)"
+              value={apiKeyInput}
+              onChange={e => setApiKeyInput(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '0.8rem 1rem',
+                border: '1px solid var(--border-strong)',
+                borderRadius: 'var(--radius-md)',
+                marginBottom: '1.5rem',
+                fontFamily: 'monospace',
+                background: 'var(--bg-surface)',
+                color: 'var(--text-primary)',
+                outline: 'none',
+              }}
+            />
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+              <Button style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border)' }} onClick={() => setShowApiModal(false)}>
+                Huỷ
+              </Button>
+              <Button onClick={saveApiKey}>
+                Lưu
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>
